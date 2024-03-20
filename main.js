@@ -5,59 +5,50 @@ canvas.width = 502
 canvas.height = 502
 
 class Cell {
-    constructor({ position, color, text}) {
+    static width = 107
+    static height = 107
+    constructor({ position, color, text, velocity }) {
         this.position = position
-        this.height = 107
-        this.width = 107
         this.color = color
         this.text = text
+        this.velocity = velocity
     }
     draw() {
         ctx.beginPath()
         ctx.fillStyle = this.color
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+        ctx.fillRect(this.position.x, this.position.y, Cell.width, Cell.height)
+        ctx.fillStyle = this.text.color
+        ctx.font = `bold ${this.text.size} Arial`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText(this.text.content, this.position.x + Cell.width / 2, this.position.y + Cell.height / 2)
         ctx.closePath()
-        if(this.text.content != '-'){
-            ctx.beginPath()
-            ctx.fillStyle = this.text.color
-            ctx.font = `bold ${this.text.size} Arial`
-            ctx.textAlign = 'center'
-            ctx.textBaseline = 'middle'
-            ctx.fillText(this.text.content, this.position.x + this.width / 2, this.position.y + this.height / 2)
-            ctx.closePath()
-        }
-
+    }
+    update() {
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
     }
 }
 
-const board = [
-    ['512', '1024', '2048', '4096'],
-    ['256', '128', '64', '32'],
-    ['2', '4', '8', '16'],
+const boardBackground = [
+    ['-', '-', '-', '-'],
+    ['-', '-', '-', '-'],
+    ['-', '-', '-', '-'],
     ['-', '-', '-', '-']
+]
+
+const board = [
+    [' ', ' ', ' ', ' '],
+    [' ', '2', ' ', ' '],
+    [' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ']
 ]
 
 const cells = []
 
 board.map((lin, i) => {
     lin.map((cell, j) => {
-        if (cell == '-') {
-            cells.push(
-                new Cell({
-                    position: {
-                        x: (122 * j) + 15,
-                        y: (122 * i) + 15
-                    },
-                    color: '#202020',
-                    text: {
-                        content: cell,
-                        size: '50px',
-                        color: 'black'
-                    }
-                })
-            )
-        }
-        else if (cell == '2') {
+        if (cell == '2') {
             cells.push(
                 new Cell({
                     position: {
@@ -69,6 +60,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '50px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -85,6 +80,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '50px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -101,6 +100,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '50px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -117,6 +120,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '45px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -133,6 +140,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '45px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -149,6 +160,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '45px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -165,6 +180,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '45px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -181,6 +200,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '45px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -197,6 +220,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '45px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -213,6 +240,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '40px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -229,6 +260,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '40px',
                         color: 'black'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -245,6 +280,10 @@ board.map((lin, i) => {
                         content: cell,
                         size: '40px',
                         color: '#e5e5e5'
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
                     }
                 })
             )
@@ -252,6 +291,53 @@ board.map((lin, i) => {
     })
 })
 
-cells.map((cell) => {
-    cell.draw()
+const animate = () => {
+    window.requestAnimationFrame(animate)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+
+    boardBackground.map((lin, i) => {
+        lin.map((cell, j) => {
+            ctx.beginPath()
+            ctx.fillStyle = '#202020'
+            ctx.fillRect((122 * j) + 18, (122 * i) + 18, 100, 100)
+            ctx.closePath()
+        })
+    })
+    cells.map((cell) => {
+        cell.draw() 
+        if(cell.position.x + cell.velocity.x >= canvas.width - Cell.width + 20 || cell.position.x + cell.velocity.x <= 13 || cell.position.y + cell.velocity.y >= 520 - Cell.height || cell.position.y + cell.velocity.y <= 13){
+            cell.velocity.y = 0
+            cell.velocity.x = 0
+        }
+        cell.update()
+    })
+
+}
+
+document.addEventListener('keydown', ({ key }) => {
+    if (key == 'ArrowRight'){
+        cells.map((cell, i) => {
+                cell.velocity.x = 40
+        })
+    }
+    else if (key == 'ArrowUp'){
+        cells.map((cell, i) => {
+                cell.velocity.y = -40
+        })
+    }
+    else if (key == 'ArrowDown'){
+        cells.map((cell, i) => {
+                cell.velocity.y = 40
+        })
+    }
+    else if (key == 'ArrowLeft'){
+        cells.map((cell, i) => {
+                cell.velocity.x = -40
+        })
+    }
+    
+
 })
+
+animate()
