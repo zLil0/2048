@@ -30,6 +30,8 @@ class Cell {
     }
 }
 
+let keyPressed = false
+
 const boardBackground = [
     ['-', '-', '-', '-'],
     ['-', '-', '-', '-'],
@@ -39,7 +41,7 @@ const boardBackground = [
 
 const board = [
     [' ', ' ', ' ', ' '],
-    [' ', '2', ' ', ' '],
+    ['2', ' ', ' ', '4'],
     [' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ']
 ]
@@ -305,38 +307,85 @@ const animate = () => {
         })
     })
     cells.map((cell) => {
-        cell.draw() 
-        if(cell.position.x + cell.velocity.x >= canvas.width - Cell.width + 20 || cell.position.x + cell.velocity.x <= 13 || cell.position.y + cell.velocity.y >= 520 - Cell.height || cell.position.y + cell.velocity.y <= 13){
+        cell.draw()
+        if (cell.position.x + cell.velocity.x >= canvas.width - Cell.width + 20 || cell.position.x + cell.velocity.x <= 13 || cell.position.y + cell.velocity.y >= 500 - Cell.height || cell.position.y + cell.velocity.y <= 13) {
             cell.velocity.y = 0
             cell.velocity.x = 0
         }
+        cells.map((other, i) => {
+            if (other.text.content !== cell.text.content) {
+                if (cell.position.x + cell.velocity.x <= other.position.x + Cell.width && cell.position.x + cell.velocity.x + Cell.width >= other.position.x &&
+                    cell.position.y + cell.velocity.y <= other.position.y + Cell.width && cell.position.y + cell.velocity.y + Cell.width >= other.position.y) {
+                    cell.velocity.y = 0
+                    cell.velocity.x = 0
+                }
+            }
+        })
+
+
         cell.update()
     })
 
 }
 
 document.addEventListener('keydown', ({ key }) => {
-    if (key == 'ArrowRight'){
+    if (key == 'ArrowRight') {
         cells.map((cell, i) => {
+            if(cell.velocity.y === 0){
                 cell.velocity.x = 40
+                keyPressed = true
+            }
         })
     }
-    else if (key == 'ArrowUp'){
+    else if (key == 'ArrowUp') {
         cells.map((cell, i) => {
-                cell.velocity.y = -40
+            cell.velocity.y = -40
+            keyPressed = true
         })
     }
-    else if (key == 'ArrowDown'){
+    else if (key == 'ArrowDown') {
         cells.map((cell, i) => {
-                cell.velocity.y = 40
+            cell.velocity.y = 40
+            keyPressed = true
         })
     }
-    else if (key == 'ArrowLeft'){
+    else if (key == 'ArrowLeft') {
         cells.map((cell, i) => {
+            if(cell.velocity.y === 0){
                 cell.velocity.x = -40
+                keyPressed = true
+            }
         })
     }
-    
+
+
+})
+document.addEventListener('keyup', ({ key }) => {
+    if (key == 'ArrowRight') {
+        cells.map((cell, i) => {
+            cell.velocity.x = 40
+            keyPressed = true
+        })
+    }
+    else if (key == 'ArrowUp') {
+        cells.map((cell, i) => {
+            cell.velocity.y = -40
+            keyPressed = true
+        })
+    }
+    else if (key == 'ArrowDown') {
+        cells.map((cell, i) => {
+            cell.velocity.y = 40
+            keyPressed = true
+        })
+    }
+    else if (key == 'ArrowLeft') {
+        cells.map((cell, i) => {
+            cell.velocity.x = -40
+            keyPressed = true
+        })
+    }
+
 
 })
 
